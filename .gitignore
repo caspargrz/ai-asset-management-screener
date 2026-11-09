@@ -1,0 +1,13 @@
+# Python System & Cache
+__pycache__/
+*.py[cod]
+
+# Environments
+venv/
+.env
+
+# Output Files
+*.xlsx
+
+# VS Code Settings
+.vscode/
