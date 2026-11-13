@@ -40,3 +40,16 @@ ai-asset-management-screener/
 ├── .env.example        # Environment variable template
 ├── .gitignore          # File exclusion rules for version control (ignoring .env & .db)
 └── README.md           # Project documentation
+
+
+# 1. Clone repository & install dependencies
+git clone [https://github.com/caspargrz/ai-asset-management-screener.git](https://github.com/caspargrz/ai-asset-management-screener.git)
+cd ai-asset-management-screener
+pip install yfinance pandas openpyxl pydantic openai python-dotenv
+
+# 2. Configure API key
+cp .env.example .env
+# Add your OPENAI_API_KEY inside .env
+
+# 3. Run screening pipeline
+python main.py

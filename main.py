@@ -38,7 +38,7 @@ def run_screener(tickers: list[str]):
     df.to_excel(output_file, index=False)
     print(f"Analysis complete. Results saved to {output_file}")
 
-    # 4. Beispiel für SQL-Filterausgabe in der Konsole
+    
     print("\n--- SQL Query: High Confidence Bullish Verdicts (>= 8) ---")
     bulls = get_high_confidence_bulls(min_confidence=8)
     for row in bulls:
