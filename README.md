@@ -53,3 +53,13 @@ cp .env.example .env
 
 # 3. Run screening pipeline
 python main.py
+
+
+## Structured Output Enforcement (`Pydantic` + OpenAI API)
+![Pydantic Schema](assets/code_architecture.png)
+
+## Pipeline Execution & SQL Filtering
+![Terminal Output](assets/terminal_output.png)
+
+## Generated Committee Report (Excel)
+![Excel Report](assets/excel_report.png)
