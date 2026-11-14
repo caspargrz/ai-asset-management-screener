@@ -1,47 +1,47 @@
 # Automated Equity & AI Risk Screener
 
-An automated financial risk and investment assessment pipeline for Asset Management built with Python, SQLite, `yfinance`, Pydantic, and the OpenAI API (`gpt-4o-mini`). 
+An automated ETL and GenAI equity screening pipeline built to support fundamental research and structured risk assessment in an institutional asset management workflow.
 
-This tool extracts real-time market data, generates structured investment verdicts via LLM function calling, persists analysis results in a local SQLite database, and exports actionable findings for portfolio management into Excel.
+## Overview
+This pipeline automates the initial screening of a configurable equity universe (`NVDA`, `AAPL`, `MSFT`, `GOOGL`, `AMZN`) by combining live financial market data with deterministic LLM-based risk analysis. Instead of parsing unstructured text, it enforces strict schema validation via **Pydantic** and persists historical ratings in a local **SQLite** database for quantitative filtering and Excel reporting.
 
----
-
-## Key Features
-
-- **Market Data Extraction:** Dynamically retrieves fundamental stock metrics (Forward P/E, Revenue Growth, Business Summary) using `yfinance`.
-- **Structured AI Insights:** Enforces strict output validation using Pydantic (`CompanyAIRating`) with OpenAI Structured Outputs (`client.beta.chat.completions.parse`) for:
-  - Top 3 risk factors over a 12-month horizon
-  - Investment sentiment verdict (Bullish, Neutral, Bearish)
-  - Confidence scoring (1 to 10 scale)
-- **Relational Data Persistence (SQLite):** Automatically initializes a local relational database (`ai_asset_screener.db`) to store, update, and manage historical stock analysis records using raw SQL queries (`CREATE TABLE`, `INSERT OR REPLACE`).
-- **Portfolio Analytics & Filtering:** Includes custom SQL queries to filter high-confidence bullish recommendations (`confidence_score >= 8`) for portfolio overlay decision-making.
-- **Automated Excel Reporting:** Exports aggregated multi-ticker screening results directly into a structured Excel report (`AI_Asset_Management_Analysis.xlsx`).
-
----
+## Architecture & Pipeline Workflow
+1. **Market Data Extraction (`yfinance`):** Retrieves real-time valuation multiples (Forward P/E), revenue growth rates, and business descriptions.
+2. **Structured AI Risk Assessment (`OpenAI API` + `Pydantic`):** Evaluates each company using `gpt-4o-mini` (`temperature=0.2`) and `client.beta.chat.completions.parse()` against the `CompanyAIRating` Pydantic schema to generate:
+   - Concise business summary
+   - Top 3 company-specific 12-month risk factors
+   - Deterministic investment verdict (`Bullish`, `Neutral`, or `Bearish`)
+   - Quantitative confidence score (`1–10`)
+3. **Relational Persistence & SQL Filtering (`SQLite3`):** Stores and updates screening results in `ai_asset_screener.db` (`INSERT OR REPLACE`) and queries high-conviction opportunities (`investment_verdict = 'Bullish' AND confidence_score >= 8`).
+4. **Committee Reporting (`pandas` + `openpyxl`):** Exports the consolidated screening results into `AI_Asset_Management_Analysis.xlsx`.
 
 ## Tech Stack
-
-- **Language:** Python 3.13+
-- **Database:** SQLite3
-- **Data & API:** `yfinance`, `pandas`, `openpyxl`
-- **Data Validation:** `pydantic`
-- **AI Integration:** `openai` (`gpt-4o-mini`), `python-dotenv`
-
----
+- **Language:** Python 3.11+
+- **Data & Analytics:** `yfinance`, `pandas`, `openpyxl`
+- **GenAI & Schema Validation:** `openai` (`gpt-4o-mini` Structured Outputs), `pydantic`
+- **Database:** `sqlite3`
+- **Configuration:** `python-dotenv`
 
 ## Project Structure
-
 ```text
-ai-asset-management-screener/
-├── models.py           # Pydantic schema for structured AI outputs
-├── ai_pipeline.py      # Core yfinance & OpenAI integration logic
-├── database.py         # SQLite connection, DDL/DML operations & SQL analytics
-├── main.py             # Pipeline orchestrator, database sync & Excel export runner
-├── .env.example        # Environment variable template
-├── .gitignore          # File exclusion rules for version control (ignoring .env & .db)
-└── README.md           # Project documentation
+ai-asset-screener/
+├── assets/
+│   ├── code_architecture.png          # Pydantic CompanyAIRating schema
+│   ├── excel_report.png               # Formatted Excel committee report
+│   └── terminal_output.png            # Pipeline execution & SQL query output
+├── .env.example                       # Environment variable template
+├── .gitignore
+├── ai_asset_screener.db               # SQLite database storing screening results
+├── AI_Asset_Management_Analysis.xlsx  # Generated multi-ticker Excel report
+├── ai_pipeline.py                     # yfinance extraction & OpenAI structured parsing
+├── database.py                        # SQLite schema initialization, upsert & SQL queries
+├── main.py                            # End-to-end pipeline orchestration & Excel export
+├── models.py                          # Pydantic data validation models
+└── README.md
 
+## Setup & Usage
 
+```bash
 # 1. Clone repository & install dependencies
 git clone [https://github.com/caspargrz/ai-asset-management-screener.git](https://github.com/caspargrz/ai-asset-management-screener.git)
 cd ai-asset-management-screener
@@ -53,13 +53,3 @@ cp .env.example .env
 
 # 3. Run screening pipeline
 python main.py
-
-
-## Structured Output Enforcement (`Pydantic` + OpenAI API)
-![Pydantic Schema](assets/code_architecture.png)
-
-## Pipeline Execution & SQL Filtering
-![Terminal Output](assets/terminal_output.png)
-
-## Generated Committee Report (Excel)
-![Excel Report](assets/excel_report.png)
